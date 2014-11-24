@@ -1,12 +1,16 @@
 <project name="Client Build" default="05sendClientJarToDestination">
 	
-	<property name="buildpath" value="/home/tomasz/Dropbox/uni/diplomarbeit/exec/"/>
-	<property name="NetworkInterfaceName" value="wlan0"/>
+	<property name="buildpath" value="/tmp/cyclon-des"/>
+	<property name="NetworkInterfaceName" value="en0"/>
+	<property name="DESuser" value="dittrich"/>
+	<property name="DEStbms" value="uhu.imp.fu-berlin.de"/>
+	<property name="DEStbmsport" value="2222"/>
+	<property name="JAVAC" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin/javac"/>
 
 	<target name="00getlocalStatServerIP">
 		<exec executable="bash" outputproperty="localStatServerIP">
 			<arg value="-c"/>
-			<arg value=" ifconfig ${NetworkInterfaceName} | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"/>
+			<arg value=" ifconfig ${NetworkInterfaceName} | grep 'inet ' | cut -d: -f2 | awk '{ print $2}'"/>
 		</exec>
 	</target>
 	
@@ -21,20 +25,20 @@
     <target name="02cleanClientBuild" description="Delete old build artifacts."
     	depends="01wsimport">
     	<delete
-    		dir="${buildpath}build/client">
+    		dir="${buildpath}/build/client">
     	</delete>
     	<mkdir
-    		dir="${buildpath}build/client">
+    		dir="${buildpath}/build/client">
     	</mkdir>
-    	<copy todir="${buildpath}build/client">
+    	<copy todir="${buildpath}/build/client">
     		<fileset dir="src"/>
     	</copy>
     </target>
 	
 	
     <target name="03compileClient" depends="02cleanClientBuild">
-    	<javac 	destdir="${buildpath}build/client"
-    			executable="/opt/java/64/jdk1.6.0_45/bin/javac"
+    	<javac 	destdir="${buildpath}/build/client"
+    			executable="${JAVAC}"
     			fork="true"
     			classpath="lib/*"
     			taskname="javac1.6"
@@ -47,8 +51,8 @@
 	
     <target name="04createClientJar" depends="03compileClient">
     	<jar 
-    		destfile="${buildpath}cyclonClient.jar" 
-    		basedir="${buildpath}build/client">
+    		destfile="${buildpath}/cyclonClient.jar" 
+    		basedir="${buildpath}/build/client">
 			<restrict>
 				<name name="**/*.class"/>
 				<archives>
@@ -65,9 +69,9 @@
 	
 	
     <target name="05sendClientJarToDestination" depends="04createClientJar">
-    	<exec executable="sshpass">
+    	<exec executable="scp">
     		<arg
-    			line="-p *H1mm3l. scp ${buildpath}cyclonClient.jar uhu:/home/tomasz3/testbed/cyclonClient.jar">
+    			line="-P ${DEStbmsport} ${buildpath}/cyclonClient.jar ${DESuser}@${DEStbms}:/home/${DESuser}/testbed/cyclonClient.jar">
     		</arg>
     	</exec>
     </target>
@@ -75,17 +79,17 @@
 	
 	<target name="10cleanServerBuild">
     	<delete
-    		dir="${buildpath}build/server">
+    		dir="${buildpath}/build/server">
     	</delete>
     	<mkdir
-    		dir="${buildpath}build/server">
+    		dir="${buildpath}/build/server">
     	</mkdir>
 	</target>
 	
 	
 	<target name="11compileServer" depends="10cleanServerBuild">
-    	<javac 	destdir="${buildpath}build/server"
-    			executable="/opt/java/64/jdk1.6.0_45/bin/javac"
+    	<javac 	destdir="${buildpath}/build/server"
+    			executable="${JAVAC}"
     			fork="true"
     			classpath="lib/*">
     		<src path="src/gossip/stat/server"/>
@@ -96,8 +100,8 @@
 	
 	<target name="12createServerJar" depends="11compileServer">
 		<jar 
-			destfile="${buildpath}cyclonServer.jar" 
-			basedir="${buildpath}build/server">
+			destfile="${buildpath}/cyclonServer.jar" 
+			basedir="${buildpath}/build/server">
 			<restrict>
 				<name name="**/*.class"/>
 				<archives>
@@ -117,9 +121,9 @@
 	
 	
 	<target name="13sendServerJarToDestination" depends="12createServerJar">
-		<exec executable="sshpass">
+		<exec executable="scp">
 		   	<arg
-		    	line="-p *H1mm3l. scp ${buildpath}cyclonServer.jar uhu:/home/tomasz3/testbed/cyclonServer.jar">
+		    	line="-P ${DEStbmsport} ${buildpath}/cyclonServer.jar ${DESuser}@${DEStbms}:/home/${DESuser}/testbed/cyclonServer.jar">
 		    </arg>
 		</exec>
 	</target>
