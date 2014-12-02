@@ -5,6 +5,8 @@
 	<property name="DESuser" value="dittrich"/>
 	<property name="DEStbms" value="uhu.imp.fu-berlin.de"/>
 	<property name="DEStbmsport" value="2222"/>
+	<property name="DESuserDirServer" value="/home/${DESuser}/cyclon"/>
+	<property name="DESuserDirClient" value="/home/${DESuser}/testbed/cyclon"/>
 	<property name="JAVAC" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin/javac"/>
 
 	<target name="00getlocalStatServerIP">
@@ -71,7 +73,7 @@
     <target name="05sendClientJarToDestination" depends="04createClientJar">
     	<exec executable="scp">
     		<arg
-    			line="-P ${DEStbmsport} ${buildpath}/cyclonClient.jar ${DESuser}@${DEStbms}:/home/${DESuser}/testbed/cyclonClient.jar">
+    			line="-P ${DEStbmsport} ${buildpath}/cyclonClient.jar ${DESuser}@${DEStbms}:${DESuserDirClient}/cyclonClient.jar">
     		</arg>
     	</exec>
     </target>
@@ -123,7 +125,7 @@
 	<target name="13sendServerJarToDestination" depends="12createServerJar">
 		<exec executable="scp">
 		   	<arg
-		    	line="-P ${DEStbmsport} ${buildpath}/cyclonServer.jar ${DESuser}@${DEStbms}:/home/${DESuser}/testbed/cyclonServer.jar">
+		    	line="-P ${DEStbmsport} ${buildpath}/cyclonServer.jar ${DESuser}@${DEStbms}:${DESuserDirServer}/cyclonServer.jar">
 		    </arg>
 		</exec>
 	</target>
