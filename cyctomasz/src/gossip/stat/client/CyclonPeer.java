@@ -331,7 +331,7 @@ public class CyclonPeer implements Runnable {
 							.getHostAddress().substring(bootstrapnode.getHostAddress().lastIndexOf("."))));
 					printDebug("bootstrapnode after subnetmaskchange: " + bootstrapnode.getHostAddress());
 					// get active Port
-					bootstrapPort = statServer.getBootstraskypPort(bootstrapnode.getHostAddress());
+					bootstrapPort = statServer.getBootstrapPort(bootstrapnode.getHostAddress());
 				}
 
 				addSeedNode(bootstrapnode, bootstrapPort);
