@@ -51,7 +51,7 @@ public class Main {
 				"List of favoured neighbours for restart. Default empty. Format: [host-wlan0, ... , host]");
 		options.addOption("period", true, "Period for restarts. Default socketTimeout.");
 		options.addOption("num", true, "Number of chosen favoured neighbors. Default 1.");
-		options.addOption("prob", true, "Propability to replace neighbor. Default 1.");
+		options.addOption("prob", true, "Propability to replace neighbor. Default 1. Format: x.xx");
 		options.addOption("cache", true, "Cache size. Default 10.");
 		options.addOption("m", true , "Message size. Default 2. Has to be smaller than cache size.");
 		options.addOption("cyc", true, "Maximum cycles. Default 2000");
