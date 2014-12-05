@@ -54,6 +54,7 @@ public class Main {
 		options.addOption("prob", true, "Propability to replace neighbor. Default 1.");
 		options.addOption("cache", true, "Cache size. Default 10.");
 		options.addOption("m", true , "Message size. Default 2. Has to be smaller than cache size.");
+		options.addOption("cyc", true, "Maximum cycles. Default 2000");
 
 		// read Options from command line
 		CommandLineParser parser = new PosixParser();
@@ -139,6 +140,7 @@ public class Main {
 			}
 			int basePort = (cmd.hasOption("p") ? Integer.parseInt(cmd.getOptionValue("p")) : 9000);
 			int maxClients = (cmd.hasOption("c") ? Integer.parseInt(cmd.getOptionValue("c")) : 1);
+			int maxCycles = (cmd.hasOption("cyc") ? Integer.parseInt(cmd.getOptionValue("cyc")) : 2000);
 			boolean seed = !cmd.hasOption("i");
 			int cache_size = (cmd.hasOption("cache") ? Integer.parseInt(cmd.getOptionValue("cache")) : 10);
 			int message_size = (cmd.hasOption("m") ? Integer.parseInt(cmd.getOptionValue("m")) : 2);
@@ -222,15 +224,15 @@ public class Main {
 				if (cmd.hasOption("t")) {
 					if (cmd.getOptionValue("t").equals("static")) {
 						CyclonStatic.runCyclon(basePort, maxClients, seed, seedIP, statServerAddress, statServerPort,
-								networkInterfaceIP, fav_list, period, num, prob, cache_size, message_size);
+								networkInterfaceIP, fav_list, period, num, prob, cache_size, message_size, maxCycles);
 					}
 					if (cmd.getOptionValue("t").equals("churn")) {
 						CyclonChurn.runCyclon(basePort, maxClients, seed, seedIP, statServerAddress, statServerPort,
-								networkInterfaceIP, fav_list, period, num, prob, cache_size, message_size);
+								networkInterfaceIP, fav_list, period, num, prob, cache_size, message_size, maxCycles);
 					}
 				} else {
 					CyclonStatic.runCyclon(basePort, maxClients, seed, seedIP, statServerAddress, statServerPort,
-					networkInterfaceIP, fav_list, period, num, prob, cache_size, message_size);
+					networkInterfaceIP, fav_list, period, num, prob, cache_size, message_size, maxCycles);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

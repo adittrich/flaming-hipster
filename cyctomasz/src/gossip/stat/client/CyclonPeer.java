@@ -33,8 +33,9 @@ public class CyclonPeer implements Runnable {
 
 	private NeighborCache neighbors;
 	private List<Neighbor> favoured_neighbours;
-	final private int X_OUT_FAV, RESTART_PERIOD;
+	final private int X_OUT_FAV, RESTART_PERIOD, RESTART_PROB;
 	private boolean[] prob_array;
+	private int cycle_count;
 	private Random rand;
 	private DatagramSocket sock;
 	private int pendingShuffleId;
@@ -54,12 +55,14 @@ public class CyclonPeer implements Runnable {
 	final Lock neighbor_lock = new ReentrantLock();
 
 	public CyclonPeer(InetAddress ip, int port, InetAddress statServerAddress, int statServerPort,
-			int cache_size, int message_size) {
+			int cache_size, int message_size, int cycle_count) {
 		// CyclonPeer initialization phase
+		this.cycle_count = cycle_count;
 		c = cache_size;
 		l = message_size;
 		this.X_OUT_FAV = 0;
 		this.RESTART_PERIOD = 0;
+		this.RESTART_PROB = 0;
 		try {
 			this.favoured_neighbours = new ArrayList<Neighbor>();
 			neighbors = new NeighborCache();
@@ -86,8 +89,9 @@ public class CyclonPeer implements Runnable {
 
 	public CyclonPeer(InetAddress ip, int port, InetAddress statServerAddress, int statServerPort,
 			List<Neighbor> favoured_neighbours, int x_out_fav, int restart_period, float restart_prob,
-			int cache_size,int message_size) {
+			int cache_size,int message_size, int cycle_count) {
 		// CyclonPeer initialization phase
+		this.cycle_count = cycle_count;
 		c = cache_size;
 		l = message_size;
 		if (restart_period == -1) {
@@ -101,17 +105,11 @@ public class CyclonPeer implements Runnable {
 		}
 		this.X_OUT_FAV = x_out_fav;
 		this.RESTART_PERIOD = restart_period;
+		this.RESTART_PROB = Math.round(restart_prob*100);
 
 		try {
 			this.favoured_neighbours = favoured_neighbours;
-			this.prob_array = new boolean[100];
-			for (int j = 0; j < 100; j++) {
-				if (j < restart_prob * 100) {
-					prob_array[j] = true;
-				} else {
-					prob_array[j] = false;
-				}
-			}
+			
 			neighbors = new NeighborCache();
 			rand = new Random();
 			sock = new DatagramSocket(port, ip);
@@ -150,6 +148,11 @@ public class CyclonPeer implements Runnable {
 				}
 				while (!Thread.currentThread().isInterrupted()) {
 					try {
+						if(cycle_count <= 0){
+							System.err.println("Reached maximum cycles. Exiting.");
+							System.exit(0);
+						}
+						cycle_count--;
 						shuffleInit();
 						Boolean response = responseReceived.poll(socketTimeout, TimeUnit.MILLISECONDS);
 						if (response == null) {
@@ -182,9 +185,18 @@ public class CyclonPeer implements Runnable {
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
+				boolean[] prob_array = new boolean[100];
+				for (int j = 0; j < 100; j++) {
+					if (j < RESTART_PROB * 100) {
+						prob_array[j] = true;
+					} else {
+						prob_array[j] = false;
+					}
+				}
 				while (!Thread.currentThread().isInterrupted()) {
 					neighbor_lock.lock();
 					try {
+						printDebug("Restart.");
 						Collections.shuffle(favoured_neighbours);
 						for (int i = 0; i < X_OUT_FAV && i < neighbors.neighbors.size(); i++) {
 							// add favoured
@@ -199,6 +211,7 @@ public class CyclonPeer implements Runnable {
 									}
 							}
 						}
+						neighbor_lock.unlock();
 						Thread.sleep(RESTART_PERIOD);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -318,16 +331,18 @@ public class CyclonPeer implements Runnable {
 							.getHostAddress().substring(bootstrapnode.getHostAddress().lastIndexOf("."))));
 					printDebug("bootstrapnode after subnetmaskchange: " + bootstrapnode.getHostAddress());
 					// get active Port
-					bootstrapPort = statServer.getBootstrapPort(bootstrapnode.getHostAddress());
+					bootstrapPort = statServer.getBootstraskypPort(bootstrapnode.getHostAddress());
 				}
 
 				addSeedNode(bootstrapnode, bootstrapPort);
 			}
+			neighbor_lock.unlock();
+			
 			pendingShuffleId = rand.nextInt();
 			if (pendingShuffleId == 0) {
 				pendingShuffleId++;
 			}
-
+			neighbor_lock.lock();
 			List<Neighbor> requestList = neighbors.buildRequestList(pendingShuffleId);
 			byte[] requestBytes = NeighborCache.neighborListToShuffleBytes(requestList, pendingShuffleId);
 

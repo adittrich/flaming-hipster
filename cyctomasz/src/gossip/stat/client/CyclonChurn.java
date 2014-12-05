@@ -23,7 +23,7 @@ public class CyclonChurn {
     public static void runCyclon(final int basePort, final int maxClients, final boolean isSeed,  
     		final InetAddress seedIP, final InetAddress statServerAddress, final int statServerPort, 
     		final InetAddress networkInterfaceIP, final List<Neighbor> fav_list, final int period, 
-    		final int num, final int prob,final int cache_size,final int message_size) throws IOException {
+    		final int num, final int prob,final int cache_size,final int message_size, final int maxCycles) throws IOException {
 
         Runnable peerFactory = new Runnable() {
         	
@@ -52,9 +52,9 @@ public class CyclonChurn {
     		                            lock.lock();
     		                            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<" + Thread.currentThread().getName() + ": Starting new node with Port " + (basePort + portOffset.get()) + ">>>>>>>>>>>>>>>>>>>>>>>>>");
     		                            if(!fav_list.isEmpty()){
-    		                            	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort, fav_list, period, num, prob, cache_size, message_size);
+    		                            	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort, fav_list, period, num, prob, cache_size, message_size, maxCycles);
     		                            }else{
-    		                            	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort, cache_size, message_size);
+    		                            	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort, cache_size, message_size, maxCycles);
     		                            }
     		                            if (portOffset.get() > 1) {
     		                                p.addSeedNode(networkInterfaceIP, basePort + portOffset.get() -1);
