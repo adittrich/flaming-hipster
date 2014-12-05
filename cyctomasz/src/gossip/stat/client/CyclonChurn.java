@@ -2,6 +2,7 @@ package gossip.stat.client;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -21,7 +22,8 @@ public class CyclonChurn {
      */
     public static void runCyclon(final int basePort, final int maxClients, final boolean isSeed,  
     		final InetAddress seedIP, final InetAddress statServerAddress, final int statServerPort, 
-    		final InetAddress networkInterfaceIP) throws IOException {
+    		final InetAddress networkInterfaceIP, final List<Neighbor> fav_list, final int period, 
+    		final int num, final int prob,final int cache_size,final int message_size) throws IOException {
 
         Runnable peerFactory = new Runnable() {
         	
@@ -44,11 +46,16 @@ public class CyclonChurn {
         						 try {
         							 	
     		                         	Random ontime = new Random();
+    		                         	CyclonPeer p;
     		                         	// sleep for random time for asynchronous start
     		                            Thread.sleep(ontime.nextInt(3000));
     		                            lock.lock();
     		                            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<" + Thread.currentThread().getName() + ": Starting new node with Port " + (basePort + portOffset.get()) + ">>>>>>>>>>>>>>>>>>>>>>>>>");
-    		                            CyclonPeer p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort);
+    		                            if(!fav_list.isEmpty()){
+    		                            	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort, fav_list, period, num, prob, cache_size, message_size);
+    		                            }else{
+    		                            	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset.incrementAndGet()), statServerAddress, statServerPort, cache_size, message_size);
+    		                            }
     		                            if (portOffset.get() > 1) {
     		                                p.addSeedNode(networkInterfaceIP, basePort + portOffset.get() -1);
     		                            }

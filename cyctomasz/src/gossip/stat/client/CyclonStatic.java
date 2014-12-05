@@ -1,10 +1,8 @@
 package gossip.stat.client;
 
-import gossip.stat.client.olsrd.IRoutingTable;
-import gossip.stat.client.olsrd.OLSRDRoutingTable;
-
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.Random;
 
 public class CyclonStatic {
@@ -15,7 +13,8 @@ public class CyclonStatic {
      */
     public static void runCyclon(final int basePort, final int maxClients, final boolean isSeed,  
     		final InetAddress seedIP, final InetAddress statServerAddress, final int statServerPort, 
-    		final InetAddress networkInterfaceIP) throws IOException {
+    		final InetAddress networkInterfaceIP, final List<Neighbor> fav_list, final int period,
+    		final int num, final int prob,final int cache_size,final int message_size) throws IOException {
 
         Runnable peerFactory = new Runnable() {
         	
@@ -27,7 +26,13 @@ public class CyclonStatic {
                 while (true && portOffset < maxClients) {
                     try {
                         Random r = new Random();
-                        CyclonPeer p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset++), statServerAddress, statServerPort);
+                        CyclonPeer p;
+                        if(!fav_list.isEmpty()){
+                        	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset++), statServerAddress, statServerPort,
+                        			fav_list, period, num, prob, cache_size, message_size);
+                        }else{
+                        	p = new CyclonPeer(networkInterfaceIP, basePort + (portOffset++), statServerAddress, statServerPort, cache_size, message_size);
+                        }
                         if (portOffset > 1) {
                             p.addSeedNode(networkInterfaceIP, basePort + r.nextInt(portOffset - 1));
                         }
