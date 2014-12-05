@@ -48,7 +48,7 @@ public class Main {
 		options.addOption("n", true, "Use this networkInterface. Default wlan0");
 		options.addOption("x", false, "Cleanup server data for next experiment. Has to be combined with opton -o.");
 		options.addOption("restart", true,
-				"List of favoured neighbours for restart. Default empty. Format: [host-wlan0, ... , host]");
+				"List of favoured neighbours for restart. Default empty (no restart). Format: [node, ... , node]");
 		options.addOption("period", true, "Period for restarts. Default socketTimeout.");
 		options.addOption("num", true, "Number of chosen favoured neighbors. Default 1.");
 		options.addOption("prob", true, "Propability to replace neighbor. Default 1. Format: x.xx");
