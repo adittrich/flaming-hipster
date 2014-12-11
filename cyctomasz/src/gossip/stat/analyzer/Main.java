@@ -19,7 +19,7 @@ public class Main {
 		Graph topology = new Graph();
 		String outputfile = "";
 		
-		boolean exit = false;
+		//boolean exit = false;
 		
 		Scanner in = new Scanner(System.in);
 		boolean nextStep = false;

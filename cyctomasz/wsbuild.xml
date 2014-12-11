@@ -94,6 +94,7 @@
     		    classpath="lib/*">
     		<src path="src/gossip/stat/server"/>
     		<src path="src/gossip/stat/tools"/>
+    		<compilerarg value="-Xlint:unchecked"/>
     	</javac>
 	</target>
 	

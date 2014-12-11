@@ -8,8 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
+//import java.io.ObjectOutputStream;
+//import java.net.InetAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,12 +60,13 @@ public class StatServer {
     		return n;
     	}   	
     }
-    /**
+    /*
      * returns an active nodes Port given only the IP Address 
      */
     @WebMethod
     public Integer getBootstrapPort(String bootstrapNode) {
     	Integer port=null;
+//    	System.out.println(this.list);
     	for (String currentNode : this.list.keySet()) {
     		if (currentNode.startsWith(bootstrapNode)){
     			if (this.list.get(currentNode).status==Node.CONNECTED) {

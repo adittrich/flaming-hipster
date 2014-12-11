@@ -13,7 +13,12 @@ import com.thoughtworks.xstream.annotations.*;
 public class Node implements Serializable {
     //Timestamps
 
-    public static final char NEW = 1;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public static final char NEW = 1;
     public static final char NO_LINKS = 2;
     public static final char CONNECTED = 3;
     public static final char LEFT = 4;

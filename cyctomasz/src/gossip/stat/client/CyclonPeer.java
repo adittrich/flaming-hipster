@@ -15,7 +15,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+//import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -27,14 +27,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.namespace.QName;
 
-import com.sun.j3d.internal.FastVector;
+//import com.sun.j3d.internal.FastVector;
 
 public class CyclonPeer implements Runnable {
 
 	private NeighborCache neighbors;
 	private List<Neighbor> favoured_neighbours;
 	final private int X_OUT_FAV, RESTART_PERIOD, RESTART_PROB;
-	private boolean[] prob_array;
+	//private boolean[] prob_array;
 	private int cycle_count;
 	private Random rand;
 	private DatagramSocket sock;
@@ -50,7 +50,7 @@ public class CyclonPeer implements Runnable {
 	public final static int socketTimeout = 3000; // sleep before shuffling
 													// again and receiving
 													// socket timeout
-	public final static int shufflePayloadSize = l * Neighbor.recordBytes + 4;
+	public static int shufflePayloadSize;
 	public final static int idLength = 4;
 	final Lock neighbor_lock = new ReentrantLock();
 
@@ -60,6 +60,7 @@ public class CyclonPeer implements Runnable {
 		this.cycle_count = cycle_count;
 		c = cache_size;
 		l = message_size;
+		shufflePayloadSize = l * Neighbor.recordBytes + 4;
 		this.X_OUT_FAV = 0;
 		this.RESTART_PERIOD = 0;
 		this.RESTART_PROB = 0;
@@ -126,6 +127,7 @@ public class CyclonPeer implements Runnable {
 			} else {
 				_s = new StatServerService();
 			}
+			printDebug("Hostname statserver: " + statServerAddress.getHostName());
 			statServer = _s.getStatServerPort();
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -319,12 +321,14 @@ public class CyclonPeer implements Runnable {
 				while (bootstrapPort == null) {
 					IRoutingTable routingTab = new OLSRDRoutingTable();
 					bootstrapnode = routingTab.getBootstrapNode();
+					bootstrapPort = statServer.getBootstrapPort(bootstrapnode.getHostAddress());
 					printDebug("bootstrapnode before subnetmaskchange: " + bootstrapnode.getHostAddress());
+					printDebug("bootstrapport before subnetmaskchange: " + bootstrapPort);
 					printDebug("self IP: " + neighbors.self.getIp().getHostAddress());
 					/*
-					 * replace subnetmask with own needed when Cyclon does not
-					 * run on top of OLSR bootstrapping is performed by picking
-					 * a random olsr neighbor and first found active Port
+					 * replace subnetmask with own
+					 * needed when Cyclon does not run on top of OLSR 
+					 * bootstrapping is performed by picking a random olsr neighbor and first found active Port
 					 */
 					bootstrapnode = InetAddress.getByName((neighbors.self.getIp().getHostAddress()
 							.substring(0, neighbors.self.getIp().getHostAddress().lastIndexOf(".")) + bootstrapnode
@@ -332,6 +336,8 @@ public class CyclonPeer implements Runnable {
 					printDebug("bootstrapnode after subnetmaskchange: " + bootstrapnode.getHostAddress());
 					// get active Port
 					bootstrapPort = statServer.getBootstrapPort(bootstrapnode.getHostAddress());
+//					bootstrapPort = (int) neighbors.self.getPort();
+					printDebug("bootstrapport after subnetmaskchange: " + bootstrapPort);
 				}
 
 				addSeedNode(bootstrapnode, bootstrapPort);

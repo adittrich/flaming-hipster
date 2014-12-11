@@ -16,7 +16,12 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 @XStreamAlias("edge")
 public class Edge implements Serializable {
     
-    @XStreamOmitField
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@XStreamOmitField
     private char status = 0; 
     
     @XStreamAsAttribute

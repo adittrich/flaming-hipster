@@ -2,12 +2,13 @@ package gossip.stat.client;
 
 import gossip.stat.client.soap.StatServerService;
 import gossip.stat.tools.Util;
+import gossip.stat.client.Neighbor;
 
-import java.io.BufferedWriter;
+//import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
+//import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -78,14 +79,15 @@ public class Main {
 
 		// run in analyzer mode
 		if (cmd.hasOption("a")) {
-			String fileName = ((cmd.getOptionValue("a").equals("") || cmd.getOptionValue("o") == null) ? "outputCyclon"
+/*			String fileName = ((cmd.getOptionValue("a").equals("") || cmd.getOptionValue("o") == null) ? "outputCyclon"
 					: cmd.getOptionValue("o"));
-			try {
+*/			try {
 				InetAddress statServerAddress = InetAddress
 						.getByName(cmd.hasOption("s") ? cmd.getOptionValue("s") : "");
 				StatServerService _s = new StatServerService(new URL("http://" + statServerAddress.getHostName() + ":"
 						+ statServerPort + "/gossipStatServer?wsdl"), new QName("http://server.stat.gossip/",
 						"StatServerService"));
+				@SuppressWarnings("unused")
 				gossip.stat.client.soap.StatServer s = _s.getStatServerPort();
 				// TODO read in Values
 				// TODO analyze and create output file

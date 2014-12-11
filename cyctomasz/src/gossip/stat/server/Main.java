@@ -3,9 +3,9 @@ package gossip.stat.server;
 import gossip.stat.tools.Util;
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
+//import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
+//import java.util.Enumeration;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

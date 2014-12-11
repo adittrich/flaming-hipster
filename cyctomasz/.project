@@ -15,4 +15,16 @@
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>build</name>
+			<type>2</type>
+			<locationURI>PARENT-6-PROJECT_LOC/private/tmp/cyclon-des/build</locationURI>
+		</link>
+		<link>
+			<name>tmpbuild</name>
+			<type>2</type>
+			<location>/private/tmp/cyclon-des/build</location>
+		</link>
+	</linkedResources>
 </projectDescription>

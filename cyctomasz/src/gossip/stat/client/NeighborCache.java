@@ -3,6 +3,7 @@ package gossip.stat.client;
 import static gossip.stat.client.CyclonPeer.c;
 import static gossip.stat.client.CyclonPeer.l;
 import static gossip.stat.client.CyclonPeer.shufflePayloadSize;
+import gossip.stat.client.Neighbor;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+//import java.io.IOException;
 
 /**
  * @author Maciek Lukas
@@ -250,7 +252,9 @@ public class NeighborCache {
 	static byte[] neighborListToShuffleBytes(List<Neighbor> in, int id) {
 		ByteBuffer buf = ByteBuffer.allocate(shufflePayloadSize).putInt(id);
 		for (Neighbor n : in) {
+//			System.out.println("Current Neighbor: " + n);
 			for (byte b : n.toByteArray()) {
+//				System.out.println("Current Byte: " + b);
 				buf.put(b);
 			}
 		}

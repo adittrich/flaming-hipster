@@ -4,9 +4,6 @@
  */
 package gossip.stat.server;
 
-
-
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
@@ -27,6 +24,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+
+import gossip.stat.server.Edge;
+import gossip.stat.server.Graph;
+import gossip.stat.server.Node;
 
 /**
  *
@@ -177,7 +178,8 @@ public class Graph {
     		}
     	}
     }
-    public void readAlternateResults(File fileName) {
+    @SuppressWarnings("unchecked")
+	public void readAlternateResults(File fileName) {
     	try {
     		BufferedReader inXML = new BufferedReader(new FileReader(fileName));
     		XStream xstream = new XStream(new StaxDriver());
@@ -269,7 +271,8 @@ public class Graph {
         	BufferedWriter outXML = new BufferedWriter(new FileWriter(outputFileName + ".gexf"));
         	ObjectOutputStream out = xs.createObjectOutputStream(outXML, "graph");
         	List<Node> nodes = this.getNodes();
-        	List<Edge> edges = this.getEdges();
+        	@SuppressWarnings("unused")
+			List<Edge> edges = this.getEdges();
         	for (int i=0;i<nodes.size();i++) {
         		out.writeObject(nodes.get(i));
         	}
